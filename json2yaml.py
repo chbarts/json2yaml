@@ -26,7 +26,7 @@ elif len(args.input) > 0:
     with open(args.input[0], 'r') as inf:
         json2yaml(inf, sys.stdout)
     sys.exit(0)
-elif len(args.output[0]) > 0:
+elif len(args.output) > 0:
     with open(args.output[0], 'w') as outf:
         json2yaml(sys.stdin, outf)
     sys.exit(0)
