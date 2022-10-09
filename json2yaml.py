@@ -4,28 +4,32 @@ import os
 import sys
 import json
 import yaml
+import argparse
 
 def json2yaml(inf, outf):
     data = json.load(inf)
     yaml.dump(data, outf)
 
-if ((len(sys.argv) == 2) and ((sys.argv[1] == '-h') or (sys.argv[1] == '--help'))) or (len(sys.argv) > 3):
-    print("Usage: json2yaml [input.json] [output.yaml]")
-    print("With no arguments, defaults to stdin and stdout")
-    print("With one argument, reads from named file and writes to stdout")
-    sys.exit(0)
+parser = argparse.ArgumentParser(description='Convert JSON to YAML')
 
-if len(sys.argv) == 1:
-    json2yaml(sys.stdin, sys.stdout)
-    sys.exit(0)
+parser.add_argument('-i', '--input', metavar='INFILE', nargs=1, default='', help='Specify INFILE as JSON input file, defaults to stdin')
+parser.add_argument('-o', '--output', metavar='OUTFILE', nargs=1, default='', help='Specify OUTFILE as YAML output file, defaults to stdout')
 
-if len(sys.argv) == 2:
-    with open(sys.argv[1], 'r') as inf:
+args = parser.parse_args()
+
+if (len(args.input) > 0) and (len(args.output) > 0):
+    with open(args.input, 'r') as inf:
+        with open(args.output, 'w') as outf:
+            json2yaml(inf, outf)
+    sys.exit(0)
+elif len(args.input) > 0:
+    with open(args.input, 'r') as inf:
         json2yaml(inf, sys.stdout)
     sys.exit(0)
-
-if len(sys.argv) == 3:
-    with open(sys.argv[1], 'r') as inf:
-        with open(sys.argv[2], 'w') as outf:
-            json2yaml(inf, outf)
+elif len(args.output) > 0:
+    with open(args.output, 'w') as outf:
+        json2yaml(sys.stdin, outf)
+    sys.exit(0)
+else:
+    json2yaml(sys.stdin, sys.stdout)
     sys.exit(0)
